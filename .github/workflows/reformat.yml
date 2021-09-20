@@ -32,3 +32,22 @@ jobs:
           git add .
           git commit -m 'chore: reformat codes [skip ci]'
           git push origin HEAD
+
+      - name: "notify if error"
+        uses: actions/github-script@v4
+        with:
+          script: |-
+            const isPR = context.eventName == 'pull_request';
+            const jobUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            if (!isPR) {
+              return;
+            }
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Failed reformat.\n${jobUrl}`
+            });
+        if: failure()
