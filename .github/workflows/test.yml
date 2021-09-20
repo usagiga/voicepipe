@@ -27,3 +27,16 @@ jobs:
         run: "go build ."
       - name: "test"
         run: "go test -v ./..."
+      - name: "notify if error"
+        uses: actions/github-script@v4
+        with:
+          script: |-
+            const jobUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Failed reformat.\n${jobUrl}`
+            });
+        if: failure()
