@@ -21,7 +21,7 @@ jobs:
         with:
           script: |-
             const isPR = context.eventName == 'pull_request';
-            const jobUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const jobUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
             if (!isPR) {
               return;
