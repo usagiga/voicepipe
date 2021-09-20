@@ -1,0 +1,36 @@
+name: "Lint, Build & Test (Go)"
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  notify:
+    name: "notify if error"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - name: "fail"
+        run: "exit 1"
+      - name: "notify if error"
+        uses: actions/github-script@v4
+        with:
+          script: |-
+            const isPR = context.eventName == 'pull_request';
+            const jobUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            if (!isPR) {
+              return;
+            }
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Failed reformat.\n${jobUrl}`
+            });
+        if: failure()
